@@ -35,7 +35,7 @@ describe('Page model', function () {
       content : "# My Title"
       }
       page = Page.build(newPage);
-      console.log("our page is: ", page);
+      //console.log("our page is: ", page);
       result = '<h1 id="my-title">My Title</h1>\n';
     });
     describe('route', function () {
@@ -52,7 +52,7 @@ describe('Page model', function () {
   });
   describe('Class methods', function () {
     beforeEach(function () {
-      console.log("before building the page");
+      //console.log("before building the page");
       var newPage1 = {
       title : "Joe Codes",
       urlTitle: "Joe_Codes",
@@ -84,13 +84,13 @@ describe('Page model', function () {
           .catch(function(err){
             console.log("the error is: ", err);
       });
-      console.log("our page is: ", page3);
+      //console.log("our page is: ", page3);
     });
      describe('findByTag', function () {
        it('gets pages with the search tag', function(){
           Page.findByTag("javascript")
                           .then(function(result){
-           console.log("the tag result from then: ", result);
+          // console.log("the tag result from then: ", result);
            expect(result).to.have.length(2);
            expect(result[0].tags[0]).to.be.equal("javascript");
            expect(result[1].tags[0]).to.be.equal("javascript");
@@ -112,13 +112,88 @@ describe('Page model', function () {
      });
    });
 
-  // // describe('Instance methods', function () {
-  //   describe('findSimilar', function () {
-  //     it('never gets itself');
-  //     it('gets other pages with any common tags');
-  //     it('does not get other pages without any common tags');
-  //   });
-  // });
+ describe('Instance methods', function () {
+
+  beforeEach(function () {
+      console.log("before building the page");
+      var newPage1 = {
+      title : "Joe Codes",
+      urlTitle: "Joe_Codes",
+      content : "# My Title",
+      tags: ["javascript"]
+      }
+      var page1; 
+      Page.create(newPage1)
+          .then(function(result){
+             page1 = result;
+           //  console.log("within the then: page1 ", page1);
+          })
+          .catch(function(err){
+            console.log("the error is: ", err);
+      });
+      
+      console.log("are you here? page 1 ", page1);
+
+      var newPage2 = {
+      title : "Joe Codes2",
+      urlTitle: "Joe_Codes2",
+      content : "# My Title2",
+      tags: ["javascript"]
+      }
+      var page2;
+      Page.create(newPage2)
+          .then(function(result){
+                 page2 = result;
+              })
+          .catch(function(err){
+            console.log("the error is: ", err);
+      });
+
+      var newPage3 = {
+      title : "Joe Codes3",
+      urlTitle: "Joe_Codes3",
+      content : "# My Title3",
+      tags: ["java"]
+      }
+      var page3;
+      Page.create(newPage3)
+          .then(function(result){
+                 page3 = result;
+              })
+          .catch(function(err){
+            console.log("the error is: ", err);
+      });
+     // console.log("our page is: ", page3);
+    });
+
+    describe('findSimilar', function () {
+      it('never gets itself', function(){
+
+          page1.findSimilar().then(function(result){
+             expect(result.every(function(val){
+                return val.id !== page1.id;
+             })).to.be.not.equal(false);
+          });
+
+      });
+         
+         
+
+      it('gets other pages with any common tags', function(){
+
+          page1.findSimilar().then(function(result){
+             expect(result.every(function(val){
+                return val.tags.indexOf(page1.tags[0]) >= 0;
+             })).to.be.not.equal(false);
+          });
+
+
+      });
+
+
+      it('does not get other pages without any common tags');
+    });
+  });
 
   // describe('Validations', function () {
   //   it('errors without title');
